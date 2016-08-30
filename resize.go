@@ -1,10 +1,14 @@
 package main
 
 import (
+	"bytes"
+	"io/ioutil"
 	"mime/multipart"
 	"net/http"
+	"time"
 
-	"github.com/davecgh/go-spew/spew"
+	"gopkg.in/h2non/bimg.v0"
+
 	"github.com/mholt/binding"
 )
 
@@ -33,11 +37,28 @@ func (r *ResizeReq) Validate(req *http.Request, errs binding.Errors) binding.Err
 }
 
 func resize(w http.ResponseWriter, r *http.Request) {
-	request := new(ResizeReq)
-	errs := binding.Bind(r, request)
+	resizeReq := new(ResizeReq)
+	errs := binding.Bind(r, resizeReq)
 	if errs.Handle(w) {
 		return
 	}
 
-	spew.Dump(request)
+	name := resizeReq.Image.Filename
+	file, err := resizeReq.Image.Open()
+	defer file.Close()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	buf, err = ioutil.ReadAll(file)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	image, err := bimg.NewImage(buf).Resize(300, 300)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	http.ServeContent(w, r, name, time.Now(), bytes.NewReader(image))
 }
