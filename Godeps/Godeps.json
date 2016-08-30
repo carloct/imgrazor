@@ -23,9 +23,19 @@
 			"Rev": "89411c4ffb61f0ebef45d8bdb830103b358ef9fa"
 		},
 		{
+			"ImportPath": "github.com/tj/go-debug",
+			"Comment": "v2.0.0",
+			"Rev": "ff4a55a20a86994118644bbddc6a216da193cc13"
+		},
+		{
 			"ImportPath": "github.com/urfave/negroni",
 			"Comment": "v0.2.0-55-gdc6b9d0",
 			"Rev": "dc6b9d037e8dab60cbfc09c61d6932537829be8b"
+		},
+		{
+			"ImportPath": "gopkg.in/h2non/bimg.v0",
+			"Comment": "v0.1.24",
+			"Rev": "a0fc602e695f180c997b219dea06b50229c252bd"
 		}
 	]
 }
