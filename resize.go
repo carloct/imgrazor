@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	_ "image/gif"
+	_ "image/jpeg"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
@@ -48,16 +50,19 @@ func resize(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	buf, err := ioutil.ReadAll(file)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	image, err := bimg.NewImage(buf).Resize(300, 300)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	http.ServeContent(w, r, name, time.Now(), bytes.NewReader(image))

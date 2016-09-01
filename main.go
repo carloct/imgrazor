@@ -6,22 +6,35 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gorilla/context"
 	"github.com/julienschmidt/httprouter"
+	"github.com/mholt/binding"
 	"github.com/urfave/negroni"
 )
 
 func main() {
 
 	router := httprouter.New()
-	router.POST("/resize", wh(resize))
-	router.GET("/op/*options", wh(options))
+	router.POST("/image", wh(post))
+	router.GET("/", wh(test))
 
 	n := negroni.Classic()
 	n.UseHandler(router)
-	n.Run(":3000")
+	n.Run(":80")
 }
 
-func options(w http.ResponseWriter, r *http.Request) {
-	spew.Dump(context.GetAll(r))
+func post(w http.ResponseWriter, r *http.Request) {
+
+	postRequest := new(PostRequest)
+	errs := binding.Bind(r, postRequest)
+	if errs.Handle(w) {
+		spew.Dump(errs)
+		return
+	}
+
+	spew.Dump(postRequest)
+}
+
+func test(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Test"))
 }
 
 func wh(h http.HandlerFunc) httprouter.Handle {
